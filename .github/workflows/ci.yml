@@ -51,17 +51,18 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main'
     env:
-      DEPLOY_DIR: /home/ubuntu/mortgage_prod   # если юзер не ubuntu, тут поменяй
+      DEPLOY_DIR: /home/ubuntu/mortgage_prod
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-
-      - name: Deploy to $DEPLOY_DIR on Ubuntu runner
+  
+      - name: Deploy clean code
         run: |
           rm -rf "$DEPLOY_DIR"/*
-          cp -r . "$DEPLOY_DIR"
+          rsync -av --exclude='.git' ./ "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
           python3 -m venv venv
           source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
